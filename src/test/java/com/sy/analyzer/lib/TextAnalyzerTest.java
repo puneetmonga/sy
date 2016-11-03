@@ -1,5 +1,7 @@
 package com.sy.analyzer.lib;
 
+import com.sy.analyzer.external.CustomAnalyzer;
+import com.sy.analyzer.external.CustomStatistics;
 import com.sy.analyzer.word.WordCountStatistics;
 import com.sy.domain.Word;
 import org.junit.Test;
@@ -61,6 +63,16 @@ public class TextAnalyzerTest {
         List<Integer> expectecCount = asList(new Integer[]{1,1,1,1,1,1,2,1,1,1});
         List<Integer> actualCount = countMap.entrySet().stream().map(wordCountEntry -> wordCountEntry.getValue()).collect(toList());
         assertEquals(expectecCount, actualCount);
+    }
+
+    @Test
+    public void shouldInvokedRegisteredCustomAnalyzer() {
+        Config config = new Config().registerNewAnalyzer(new CustomAnalyzer());
+        analyzer = new TextAnalyzer(config);
+        analysis = analyzer.analyze(TEXT);
+        CustomStatistics customStatistics = analysis.get(CustomStatistics.class);
+        int hardCodedCustomAnalyzerOutput = 50;
+        assertEquals(hardCodedCustomAnalyzerOutput,customStatistics.getValue());
     }
 
     private Word wordAt(Position position) {
