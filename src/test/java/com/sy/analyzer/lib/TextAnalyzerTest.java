@@ -4,10 +4,10 @@ import com.sy.analyzer.external.CustomAnalyzer;
 import com.sy.analyzer.external.CustomStatistics;
 import com.sy.analyzer.word.WordCountStatistics;
 import com.sy.domain.Word;
+import com.sy.util.BinaryMap;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -48,9 +48,9 @@ public class TextAnalyzerTest {
         analyzer = new TextAnalyzer(new Config().enableWordCount());
         analysis = analyzer.analyze(TEXT);
         WordCountStatistics wordCountStatistics = analysis.get(WordCountStatistics.class);
-        Map<Word, Integer> countMap = wordCountStatistics.getCountMap();
+        BinaryMap<Word, Integer> countMap = wordCountStatistics.getCountMap();
         List<String> expectedOrder = asList(new String[]{"The", "fox", "the","back","lazy","over","brown","dog's","quick","jumped"});
-        List<String> actualOrder = countMap.entrySet().stream().map(wordCountEntry -> wordCountEntry.getKey().getValue()).collect(toList());
+        List<String> actualOrder = countMap.keySet().stream().map(word -> word.getValue()).collect(toList());
         assertEquals(expectedOrder, actualOrder);
     }
 
@@ -59,10 +59,10 @@ public class TextAnalyzerTest {
         analyzer = new TextAnalyzer(new Config().enableWordCount());
         analysis = analyzer.analyze(TEXT);
         WordCountStatistics wordCountStatistics = analysis.get(WordCountStatistics.class);
-        Map<Word, Integer> countMap = wordCountStatistics.getCountMap();
-        List<Integer> expectecCount = asList(new Integer[]{1,1,1,1,1,1,2,1,1,1});
-        List<Integer> actualCount = countMap.entrySet().stream().map(wordCountEntry -> wordCountEntry.getValue()).collect(toList());
-        assertEquals(expectecCount, actualCount);
+        BinaryMap<Word, Integer> countMap = wordCountStatistics.getCountMap();
+        List<Integer> expectedCount = asList(new Integer[]{1,1,1,1,1,1,2,1,1,1});
+        List<Integer> actualCount = countMap.keySet().stream().map(word -> countMap.get(word)).collect(toList());
+        assertEquals(expectedCount, actualCount);
     }
 
     @Test
